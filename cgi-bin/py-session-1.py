@@ -14,14 +14,12 @@ def get_cookie(name):
 
 def load_session(sid):
     try:
-        with open(f"{STORE}/{sid}.json", "r") as f:
-            return json.load(f)
+        with open(f"{STORE}/{sid}.json", "r") as f: return json.load(f)
     except Exception:
         return {}
 
 def save_session(sid, data):
-    with open(f"{STORE}/{sid}.json", "w") as f:
-        json.dump(data, f)
+    with open(f"{STORE}/{sid}.json", "w") as f: json.dump(data, f)
 
 sid = get_cookie("PYSESSID")
 set_cookie = ""
@@ -31,13 +29,11 @@ if not sid:
 
 sess = load_session(sid)
 
-# read POST body
+# Accept name if posted from the form
 length = int(os.environ.get("CONTENT_LENGTH", "0") or "0")
 body = sys.stdin.read(length) if length > 0 else ""
-
 name = sess.get("username", "")
 if body:
-    # key=value&... parser
     for kv in body.split("&"):
         if "=" in kv:
             k, v = kv.split("=", 1)
@@ -63,10 +59,12 @@ print(f"""<!doctype html>
 <h1>Python Session Page 1</h1>
 <p><b>Name:</b> {escape(name) if name else 'You do not have a name set'}</p>
 
-<form method="post" action="/cgi-bin/py-session-1.py" style="margin-top:10px">
-  <label>Your name: <input name="username" value="{escape(name)}"></label>
-  <button type="submit">Save to session</button>
-</form>
+<p style="margin-top:16px;">
+  <a href="/py-cgiform.html">Python CGI Form</a>
+</p>
 
-<p style="margin-top:16px;"><a href="/">Home</a></p>
-</body></html>""")
+<form action="/cgi-bin/py-destroy-session.py" method="get" style="margin-top:16px;">
+  <button type="submit">Destroy Session</button>
+</form>
+</body>
+</html>""")
