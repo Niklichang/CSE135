@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
-import cgi
 from html import escape
+from urllib.parse import parse_qs
 
 # Headers
 print("Cache-Control: no-cache")
@@ -11,7 +11,7 @@ print("Content-Type: text/html\n")
 query = os.environ.get("QUERY_STRING", "")
 
 # Parse into dictionary
-params = cgi.parse_qs(query)
+params = parse_qs(query)
 
 # HTML top
 print("""<!DOCTYPE html>
