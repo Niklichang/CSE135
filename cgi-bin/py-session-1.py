@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os, sys, json, time, secrets
 from html import escape
+from urllib.parse import parse_qs
 
 STORE = "/tmp"
 
@@ -29,25 +30,19 @@ if not sid:
 
 sess = load_session(sid)
 
-# Accept name if posted from the form
+# Read POST body
 length = int(os.environ.get("CONTENT_LENGTH", "0") or "0")
 body = sys.stdin.read(length) if length > 0 else ""
-name = sess.get("username", "")
 if body:
-    for kv in body.split("&"):
-        if "=" in kv:
-            k, v = kv.split("=", 1)
-            if k == "username":
-                v = v.replace("+", " ")
-                try:
-                    v = bytes(v.replace("%", r"\x"), "utf-8").decode("unicode_escape")
-                except Exception:
-                    pass
-                name = v
-                break
-    sess["username"] = name
-    sess["ts"] = int(time.time())
-    save_session(sid, sess)
+    params = parse_qs(body, keep_blank_values=True)
+    if "username" in params:
+        u = params["username"][0].strip()
+        if u != "":
+            sess["username"] = u
+            sess["ts"] = int(time.time())
+            save_session(sid, sess)
+
+name = sess.get("username", "")
 
 print("Cache-Control: no-cache")
 print("Content-Type: text/html; charset=utf-8")
@@ -66,5 +61,4 @@ print(f"""<!doctype html>
 <form action="/cgi-bin/py-destroy-session.py" method="get" style="margin-top:16px;">
   <button type="submit">Destroy Session</button>
 </form>
-</body>
-</html>""")
+</body></html>""")

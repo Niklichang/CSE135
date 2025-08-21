@@ -3,10 +3,13 @@ session_start();
 header("Cache-Control: no-cache");
 header("Content-Type: text/html; charset=utf-8");
 
-// Accept name if posted from the form
 if (isset($_POST['username'])) {
-    $_SESSION['username'] = $_POST['username'];
+    $u = trim((string)$_POST['username']);
+    if ($u !== '') {
+        $_SESSION['username'] = $u;
+    }
 }
+
 $name = $_SESSION['username'] ?? '';
 ?>
 <!doctype html>
