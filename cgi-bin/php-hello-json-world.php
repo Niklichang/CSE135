@@ -1,3 +1,4 @@
+#!/usr/bin/env php-cgi
 <?php
 // Headers
 header("Cache-Control: no-cache");

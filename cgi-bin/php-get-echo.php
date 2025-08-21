@@ -1,3 +1,4 @@
+#!/usr/bin/env php-cgi
 <?php
 header("Cache-Control: no-cache");
 header("Content-Type: text/html");
